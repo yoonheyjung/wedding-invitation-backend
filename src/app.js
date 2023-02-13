@@ -25,6 +25,8 @@ import v1Routes from './routes/v1/index.route';
  */
 if (process.env.NODE_ENV === 'development') {
   dotenv.config();
+} else if (process.env.NODE_ENV === 'production') {
+  dotenv.config({ path: '.env.production' });
 }
 
 /**
