@@ -87,12 +87,7 @@ app.use(xss());
 /**
  * CORS policy configuration
  */
-app.use(
-  cors({
-    origin: 'https://www.sikhyeworld.com/',
-    credentials: true,
-  }),
-);
+app.use(cors({ origin: '*', methods: 'GET,HEAD,PUT,PATCH,POST,DELETE' }));
 
 /**
  * Application Load Balncer healthcheck
