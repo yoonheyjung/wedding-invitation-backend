@@ -1,26 +1,28 @@
 /* eslint-disable spaced-comment */
 import { ValidationError } from '../helpers/errors.helper';
-import { rpushAsync, lrangeAsync } from '../config/redis.config';
+import { client } from '../config/redis.config';
 
 export default {
   findmessage: async (req, res) => {
-    const { limit, offset } = req.query;
-    console.log(`🚀 ~ findmessage: ~ limit, offset `, limit, offset);
+    try {
+      const { limit, offset } = req.query;
+      console.log(`🚀 ~ findmessage: ~ limit, offset `, limit, offset);
+      const resultExist = await client.exists('Messages');
+      console.log(`🚀 ~ findmessage: ~ resultExist`, resultExist);
+      const result = await client.lRange(`Messages`, 0, -1);
 
-    const result = await lrangeAsync(`Messages`, 0, -1);
-    await expireRedis(`Messages:${castCode}:${targetUserId}`, 60 * 60 * 48);
-    console.log(`🚀 ~ findmessage: ~ result`, result);
-
-    return res.status(200).json({
-      code: 2000,
-      msg: 'Success',
-      data: { total, comments },
-    });
+      res.status(200).json({
+        code: 2000,
+        msg: 'Success',
+        data: result,
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
   },
 
   saveComment: async (req, res) => {
-    const { user } = req.query;
-    const { password, message } = req.body;
+    const { user, password, message } = req.body;
 
     // 1. 현재 시간(Locale)
     const now = new Date();
@@ -32,16 +34,14 @@ export default {
     const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
     const kst = new Date(utc + KR_TIME_DIFF);
 
-    const result = await rpushAsync(
+    const result = await client.rPush(
       `Messages`,
-      `${user}:${password}:${kst}:${message}`,
+      `${user}:!${password}:!${kst.getTime()}:!${message}`,
     );
 
     console.log(`🚀 ~ saveComment: ~ result`, result);
 
-    return res
-      .status(200)
-      .json({ code: 2000, msg: 'Success', data: { message } });
+    res.status(200).json({ code: 2000, msg: 'Success', data: { message } });
   },
 
   deleteComment: async (req, res) => {
@@ -64,9 +64,9 @@ export default {
     const affectedRows = await deleteComment({ type, userNo, commentNo });
 
     if (affectedRows === 0) {
-      return res.status(404).json({ code: 4041, msg: '이미 삭제되었습니다.' });
+      res.status(404).json({ code: 4041, msg: '이미 삭제되었습니다.' });
     }
 
-    return res.status(200).json({ code: 2000, msg: 'Success' });
+    res.status(200).json({ code: 2000, msg: 'Success' });
   },
 };

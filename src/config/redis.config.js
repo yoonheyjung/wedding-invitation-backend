@@ -1,13 +1,15 @@
-import { createClient } from 'redis';
-import { promisify } from 'util';
+import { createClient, commandOptions } from 'redis';
+// import { promisify } from 'util';
 
-const redisClient = createClient(6379, process.env.REDIS_HOST, {
+const client = createClient(6379, process.env.REDIS_HOST, {
   no_ready_check: true,
+  legacyMode: true,
 });
+async function run() {
+  await client.connect();
+  // client.blPop(commandOptions({ isolated: true }), 'Messages', 0);
+}
 
-const rpushAsync = promisify(redisClient.rPush).bind(redisClient);
-const lrangeAsync = promisify(redisClient.lRange).bind(redisClient);
+run();
 
-const expireRedis = promisify(redisClient.expire).bind(redisClient);
-
-export { redisClient, rpushAsync, lrangeAsync, expireRedis };
+export { client };

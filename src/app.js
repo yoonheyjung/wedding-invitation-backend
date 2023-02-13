@@ -34,6 +34,19 @@ if (process.env.NODE_ENV === 'development') {
  */
 // db.sequelize.sync();
 
+// import { createClient } from 'redis';
+// const client = createClient(6379, process.env.REDIS_HOST, {
+//   no_ready_check: true,
+// });
+// client.on('error', (err) => {
+//   console.error(err);
+// });
+
+// client.on('ready', () => {
+//   console.log('redis is ready');
+// });
+// client.connect();
+
 /**
  * Define Express
  * @type {*|Express}
@@ -91,7 +104,7 @@ app.get('/healthcheck', function (req, res) {
 /**
  * Routes definitions
  */
-app.use('/v1/', v1Routes);
+app.use('/v1', v1Routes);
 
 /**
  * 예상하지 못하게 들어온 api endpoint 처리

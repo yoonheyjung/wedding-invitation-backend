@@ -9,7 +9,7 @@
     "transpile": "babel src --out-dir build",
     "clean": "rimraf build",
     "start": "cross-env NODE_ENV=production nodemon -L --inspect=0.0.0.0 --exec ./node_modules/.bin/babel-node src/bin/www",
-    "start:dev": "cross-env NODE_ENV=development nodemon -L --inspect=0.0.0.0 --exec ./node_modules/.bin/babel-node src/bin/www"
+    "start:dev": " cross-env NODE_ENV=development  nodemon -L --inspect=0.0.0.0 --exec ./node_modules/.bin/babel-node src/bin/www"
   },
   "repository": {
     "type": "git",
