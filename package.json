@@ -8,7 +8,7 @@
     "build": "npm-run-all clean transpile",
     "transpile": "babel src --out-dir build",
     "clean": "rimraf build",
-    "start:dev": " nodemon -L --inspect=0.0.0.0 --exec ./node_modules/.bin/babel-node src/app.js"
+    "start:dev": "cross-env NODE_ENV=development nodemon -L --inspect=0.0.0.0 --exec ./node_modules/.bin/babel-node src/bin/www"
   },
   "repository": {
     "type": "git",

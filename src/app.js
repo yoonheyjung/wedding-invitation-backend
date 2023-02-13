@@ -43,22 +43,7 @@ app.set('trust proxy', true);
 /**
  * Middleware definition
  */
-app.use(
-  morgan(
-    `:remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length]  :response-time ms ":referrer" ":user-agent"`,
-    {
-      skip(req) {
-        if (req.method === 'OPTIONS') {
-          return true;
-        }
-        if (req.originalUrl === '/healthcheck') {
-          return true;
-        }
-        return false;
-      },
-    },
-  ),
-);
+app.use(morgan('combined'));
 
 /**
  * Set security HTTP Headers
@@ -85,15 +70,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(xss());
 
 /**
- 
- */
-
-/**
- * Parsing cookie
- */
-app.use(cookieParser());
-
-/**
  * CORS policy configuration
  */
 app.use(
@@ -113,7 +89,7 @@ app.get('/healthcheck', function (req, res) {
 /**
  * Routes definitions
  */
-app.use('/partner/v1/', v1Routes);
+app.use('/v1/', v1Routes);
 
 /**
  * 예상하지 못하게 들어온 api endpoint 처리
