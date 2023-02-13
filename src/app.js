@@ -89,7 +89,7 @@ app.use(xss());
  */
 app.use(
   cors({
-    origin: true,
+    origin: 'www.sikhyeworld.com',
     credentials: true,
   }),
 );
