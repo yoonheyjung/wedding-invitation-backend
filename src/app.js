@@ -87,7 +87,13 @@ app.use(xss());
 /**
  * CORS policy configuration
  */
-app.use(cors({ origin: '*', methods: 'GET,HEAD,PUT,PATCH,POST,DELETE' }));
+app.use(
+  cors({
+    origin: '*',
+    credentials: true,
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  }),
+);
 
 /**
  * Application Load Balncer healthcheck
