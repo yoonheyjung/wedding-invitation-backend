@@ -26,6 +26,7 @@
   "dependencies": {
     "core-js": "^3.27.2",
     "cors": "^2.8.5",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "helmet": "^6.0.1",
@@ -35,6 +36,7 @@
     "prettier": "^2.8.3",
     "redis": "^4.6.4",
     "regenerator-runtime": "^0.13.11",
+    "rimraf": "^4.1.2",
     "xss-clean": "^0.1.1"
   },
   "devDependencies": {
