@@ -1,0 +1,23 @@
+version: '2'
+services:
+  nginx:
+    container_name: nginx
+    image: nginx
+    volumes:
+      - ./nginx:/etc/nginx/nginx
+    ports:
+      - '3000:80'
+    env_file:
+      - ./.env.production
+  certbot:
+    depends_on:
+      - nginx
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot/etc:/etc/letsencrypt
+      - ./certbot/var:/var/lib/letsencrypt
+      - ./certbot/www:/var/www/html
+    command: 'certonly --webroot --webroot-path=/var/www/html --email jung5318@gmail.com --agree-tos --no-eff-email --force-renewal -d sikhyeworld.com -d www.sikhyeworld.com -d api.sikhyeworld.com'
+    env_file:
+      - ./.env.production
