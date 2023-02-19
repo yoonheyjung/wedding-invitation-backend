@@ -5,7 +5,7 @@ EXPOSE 3000
 
 FROM base as builder
 COPY ["package.json", "package-lock.json*", ".babelrc", "./"]
-RUN npm ci
+RUN npm install
 COPY ./src ./src
 RUN npm run build
 RUN npm prune --production
