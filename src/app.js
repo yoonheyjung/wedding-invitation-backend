@@ -32,20 +32,18 @@ if (process.env.NODE_ENV === 'development') {
 /**
  * DB & Redis
  */
-// db.sequelize.sync();
+import { createClient } from 'redis';
 
-// import { createClient } from 'redis';
-// const client = createClient(6379, process.env.REDIS_HOST, {
-//   no_ready_check: true,
-// });
-// client.on('error', (err) => {
-//   console.error(err);
-// });
+const client = createClient();
 
-// client.on('ready', () => {
-//   console.log('redis is ready');
-// });
-// client.connect();
+client.on('error', (err) => console.log('Redis Client Error', err));
+
+async function run() {
+  await client.connect();
+  console.log('connect success !');
+}
+
+run();
 
 /**
  * Define Express

@@ -2,19 +2,39 @@
 import { ValidationError } from '../helpers/errors.helper';
 import { client } from '../config/redis.config';
 
+const convertKst = (time) => {
+  // UTC to KST (UTC + 9시간)
+  const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+  const kr_curr = new Date(Number(time) + KR_TIME_DIFF);
+
+  return kr_curr.toISOString().replace('T', ' ').substring(0, 19);
+};
+
 export default {
   findmessage: async (req, res) => {
     try {
       const { limit, offset } = req.query;
-      console.log(`🚀 ~ findmessage: ~ limit, offset `, limit, offset);
-      const resultExist = await client.exists('Messages');
-      console.log(`🚀 ~ findmessage: ~ resultExist`, resultExist);
-      const result = await client.lRange(`Messages`, 0, -1);
+      const messageData = [];
+
+      const result = await client.lRange(`Messages`, offset, limit + offset);
+      const totalCount = await client.LLEN(`Messages`);
+
+      for (let j = 0; j < result.length; j++) {
+        const data = result[j].split(':!');
+        for (let i = 0; i < data.length; i++) {
+          messageData[j] = {
+            name: data[0],
+            createdAt: convertKst(data[2]),
+            message: data[3],
+          };
+        }
+      }
 
       res.status(200).json({
         code: 2000,
         msg: 'Success',
-        data: result,
+        totalCount,
+        data: messageData,
       });
     } catch (error) {
       throw new Error(error);

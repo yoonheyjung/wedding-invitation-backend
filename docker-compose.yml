@@ -21,7 +21,7 @@ services:
       context: './'
       dockerfile: './Dockerfile'
   redis:
-    image: redis
+    image: redis:6.2.10-alpine
     restart: always
     container_name: redis
     ports:

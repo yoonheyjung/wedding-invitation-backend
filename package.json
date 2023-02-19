@@ -6,10 +6,10 @@
   "scripts": {
     "start": "npm run prod",
     "prod": "cross-env NODE_ENV=production npm-run-all build server",
-    "build": "npm-run-all clean transpile",
+    "build": "npm-run-all transpile",
     "clean": "rimraf build",
     "transpile": "babel src --out-dir build",
-    "server": "node ./build/bin/www",
+    "server": "npm run build node ./build/bin/www",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start:dev": " cross-env NODE_ENV=development  nodemon -L --inspect=0.0.0.0 --exec ./node_modules/.bin/babel-node src/bin/www"
   },
