@@ -1,7 +1,17 @@
 version: '2'
 services:
+  redis:
+    container_name: redis
+    image: redis:6.2.10-alpine
+    restart: always
+    expose:
+      - '6379'
+    command: redis-server --port 6379
+    hostname: redis
+    ports:
+      - 6379:6379
   nginx:
-    container_name: 'nginx'
+    container_name: nginx
     build:
       context: './'
       dockerfile: './docker/nginx/Dockerfile'
@@ -14,19 +24,13 @@ services:
       - '443:443'
     env_file:
       - ./.env.production
-  nodejs:
+  backend:
     container_name: 'backend'
     restart: always
     build:
       context: './'
       dockerfile: './Dockerfile'
-  redis:
-    image: redis:6.2.10-alpine
-    command: redis-server --port 6379
-    container_name: redis_boot
-    hostname: redis_boot
-    labels:
-      - 'name=redis'
-      - 'mode=standalone'
-    ports:
-      - '6379:6379'
+    links:
+      - redis
+    depends_on:
+      - redis
