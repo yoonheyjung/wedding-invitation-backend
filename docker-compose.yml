@@ -20,9 +20,3 @@ services:
     build:
       context: './'
       dockerfile: './Dockerfile'
-  redis:
-    image: redis:6.2.10-alpine
-    restart: always
-    container_name: redis
-    ports:
-      - '6379:6379'
