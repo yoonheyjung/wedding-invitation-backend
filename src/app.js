@@ -32,18 +32,18 @@ if (process.env.NODE_ENV === 'development') {
 /**
  * DB & Redis
  */
-import { createClient } from 'redis';
+// import { createClient } from 'redis';
 
-const client = createClient();
+// const client = createClient();
 
-client.on('error', (err) => console.log('Redis Client Error', err));
+// client.on('error', (err) => console.log('Redis Client Error', err));
 
-async function run() {
-  await client.connect();
-  console.log('connect success !');
-}
+// async function run() {
+//   await client.connect();
+//   console.log('connect success !');
+// }
 
-run();
+// run();
 
 /**
  * Define Express
