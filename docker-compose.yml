@@ -1,15 +1,5 @@
 version: '2'
 services:
-  redis:
-    container_name: redis
-    image: redis:6.2.10-alpine
-    restart: always
-    expose:
-      - '6379'
-    command: redis-server --port 6379
-    hostname: redis
-    ports:
-      - 6379:6379
   nginx:
     container_name: nginx
     build:
@@ -30,7 +20,3 @@ services:
     build:
       context: './'
       dockerfile: './Dockerfile'
-    links:
-      - redis
-    depends_on:
-      - redis
