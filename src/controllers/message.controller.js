@@ -16,8 +16,17 @@ export default {
       const { limit, offset } = req.query;
       const messageData = [];
 
-      const result = await client.lRange(`Messages`, offset, limit + offset);
       const totalCount = await client.LLEN(`Messages`);
+      const result = await client.lRange(`Messages`, offset, limit + offset);
+
+      if (totalCount === 0) {
+        res.status(200).json({
+          code: 2004,
+          msg: 'No Data',
+          totalCount,
+          data: messageData,
+        });
+      }
 
       for (let j = 0; j < result.length; j++) {
         const data = result[j].split(':!');
