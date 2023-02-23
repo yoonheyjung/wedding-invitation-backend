@@ -1,5 +1,4 @@
 /* eslint-disable spaced-comment */
-import { ValidationError } from '../helpers/errors.helper';
 import { client } from '../config/redis.config';
 
 const convertKst = (time) => {
@@ -19,12 +18,10 @@ export default {
       const totalCount = await client.LLEN(`Messages`);
       const result = await client.lRange(`Messages`, offset, limit + offset);
 
-      if (totalCount === 0) {
-        res.status(200).json({
+      if (!totalCount) {
+        return res.status(200).json({
           code: 2004,
           msg: 'No Data',
-          totalCount,
-          data: messageData,
         });
       }
 
@@ -68,7 +65,12 @@ export default {
       `${user}:!${password}:!${kst.getTime()}:!${message}`,
     );
 
-    console.log(`🚀 ~ saveComment: ~ result`, result);
+    console.log(
+      `🚀 ~ saveComment: ~ user, password, message`,
+      user,
+      password,
+      message,
+    );
 
     res.status(200).json({ code: 2000, msg: 'Success', data: { message } });
   },
