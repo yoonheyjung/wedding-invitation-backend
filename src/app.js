@@ -88,7 +88,6 @@ app.use(xss());
 app.use(
   cors({
     origin: '*',
-    credentials: true,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   }),
 );

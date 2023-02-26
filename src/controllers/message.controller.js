@@ -12,35 +12,32 @@ const convertKst = (time) => {
 export default {
   findmessage: async (req, res) => {
     try {
+      client.on('error', (err) => console.log('Redis Client Error', err));
+
       const { limit, offset } = req.query;
       const messageData = [];
 
-      const totalCount = await client.LLEN(`Messages`);
-      const result = await client.lRange(`Messages`, offset, limit + offset);
+      let result = [];
+      await client.lRange(`Messages`, offset, limit + offset, (err, result) => {
+        if (err) throw err;
 
-      if (!totalCount) {
-        return res.status(200).json({
-          code: 2004,
-          msg: 'No Data',
-        });
-      }
-
-      for (let j = 0; j < result.length; j++) {
-        const data = result[j].split(':!');
-        for (let i = 0; i < data.length; i++) {
-          messageData[j] = {
-            name: data[0],
-            createdAt: convertKst(data[2]),
-            message: data[3],
-          };
+        for (let j = 0; j < result.length; j++) {
+          const data = result[j].split(':!');
+          for (let i = 0; i < data.length; i++) {
+            messageData[j] = {
+              name: data[0],
+              createdAt: convertKst(data[2]),
+              message: data[3],
+            };
+          }
         }
-      }
 
-      res.status(200).json({
-        code: 2000,
-        msg: 'Success',
-        totalCount,
-        data: messageData,
+        res.status(200).json({
+          code: 2000,
+          msg: 'Success',
+          totalCount: result.length,
+          data: messageData,
+        });
       });
     } catch (error) {
       throw new Error(error);
@@ -64,13 +61,9 @@ export default {
       `Messages`,
       `${user}:!${password}:!${kst.getTime()}:!${message}`,
     );
-
-    console.log(
-      `🚀 ~ saveComment: ~ user, password, message`,
-      user,
-      password,
-      message,
-    );
+    const result1 = await client.set('key', 'value');
+    console.log(`🚀 ~ saveComment: ~ result1:`, result1);
+    console.log(`🚀 ~ saveComment: ~ result:`, result);
 
     res.status(200).json({ code: 2000, msg: 'Success', data: { message } });
   },
@@ -81,13 +74,6 @@ export default {
     // } catch (error) {
     //   throw new ValidationError(4000, error.message);
     // }
-
-    if (process.env.NODE_ENV === 'test') {
-      req.token = JSON.parse(req.headers.token);
-    } else {
-      /** NOTE: boilerplate에는 일반 유저 login 구현이 안되어있어 추가했습니다. **/
-      req.token = { userNo: '140', userId: 'cheez.sian@gmail.com' };
-    }
 
     const { userNo } = req.token;
     const { commentNo } = req.params;
