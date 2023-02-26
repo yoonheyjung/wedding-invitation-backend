@@ -41,24 +41,25 @@ export default {
   },
 
   saveComment: async (req, res) => {
-    const { user, message } = req.body;
-    console.log(`🚀 ~ saveComment: ~ user, message :`, user, message);
+    try {
+      const { user, message } = req.body;
+      console.log(`🚀 ~ saveComment: ~ user, message :`, user, message);
 
-    // 1. 현재 시간(Locale)
-    const now = new Date();
+      // 1. 현재 시간(Locale)
+      const now = new Date();
 
-    // 2. UTC 시간 계산
-    const utc = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
+      // 2. UTC 시간 계산
+      const utc = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
 
-    // 3. UTC to KST (UTC + 9시간)
-    const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-    const kst = new Date(utc + KR_TIME_DIFF);
+      // 3. UTC to KST (UTC + 9시간)
+      const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
+      const kst = new Date(utc + KR_TIME_DIFF);
 
-    await client.rPush(
-      `Messages`,
-      `${user}:!${password}:!${kst.getTime()}:!${message}`,
-    );
-    res.status(200).json({ code: 2000, msg: 'Success', data: { message } });
+      await client.rPush(`Messages`, `${user}:!${kst.getTime()}:!${message}`);
+      res.status(200).json({ code: 2000, msg: 'Success' });
+    } catch (error) {
+      console.log(`🚀 ~ saveComment: ~ error:`, error);
+    }
   },
 
   deleteComment: async (req, res) => {
