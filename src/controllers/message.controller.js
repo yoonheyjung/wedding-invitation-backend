@@ -12,13 +12,9 @@ const convertKst = (time) => {
 export default {
   findmessage: async (req, res) => {
     try {
-      client.on('error', (err) => console.log('Redis Client Error', err));
-
-      const { limit, offset } = req.query;
       const messageData = [];
 
-      let result = [];
-      await client.lRange(`Messages`, offset, limit + offset, (err, result) => {
+      await client.lRange(`Messages`, 0, -1, (err, result) => {
         if (err) throw err;
 
         for (let j = 0; j < result.length; j++) {
@@ -26,8 +22,8 @@ export default {
           for (let i = 0; i < data.length; i++) {
             messageData[j] = {
               name: data[0],
-              createdAt: convertKst(data[2]),
-              message: data[3],
+              createdAt: convertKst(data[1]),
+              message: data[2],
             };
           }
         }
@@ -45,7 +41,8 @@ export default {
   },
 
   saveComment: async (req, res) => {
-    const { user, password, message } = req.body;
+    const { user, message } = req.body;
+    console.log(`🚀 ~ saveComment: ~ user, message :`, user, message);
 
     // 1. 현재 시간(Locale)
     const now = new Date();
@@ -57,24 +54,14 @@ export default {
     const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
     const kst = new Date(utc + KR_TIME_DIFF);
 
-    const result = await client.rPush(
+    await client.rPush(
       `Messages`,
       `${user}:!${password}:!${kst.getTime()}:!${message}`,
     );
-    const result1 = await client.set('key', 'value');
-    console.log(`🚀 ~ saveComment: ~ result1:`, result1);
-    console.log(`🚀 ~ saveComment: ~ result:`, result);
-
     res.status(200).json({ code: 2000, msg: 'Success', data: { message } });
   },
 
   deleteComment: async (req, res) => {
-    // try {
-    //   await schemaType.validateAsync(req.query);
-    // } catch (error) {
-    //   throw new ValidationError(4000, error.message);
-    // }
-
     const { userNo } = req.token;
     const { commentNo } = req.params;
     const { type } = req.query;
