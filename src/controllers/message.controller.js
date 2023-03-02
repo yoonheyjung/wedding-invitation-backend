@@ -2,11 +2,13 @@
 import { client } from '../config/redis.config';
 
 const convertKst = (time) => {
-  // UTC to KST (UTC + 9시간)
-  const KR_TIME_DIFF = 9 * 60 * 60 * 1000;
-  const kr_curr = new Date(Number(time) + KR_TIME_DIFF);
+  const kr_curr = new Date(Number(time));
 
   return kr_curr.toISOString().replace('T', ' ').substring(0, 19);
+};
+
+const shuffle = (array) => {
+  return array.sort(() => Math.random() - 0.5);
 };
 
 export default {
@@ -31,8 +33,8 @@ export default {
         res.status(200).json({
           code: 2000,
           msg: 'Success',
-          totalCount: result.length,
-          data: messageData,
+          totalCount: result.length ?? 0,
+          data: shuffle(messageData) ?? [],
         });
       });
     } catch (error) {
@@ -43,7 +45,12 @@ export default {
   saveComment: async (req, res) => {
     try {
       const { user, message } = req.body;
-      console.log(`🚀 ~ saveComment: ~ user, message :`, user, message);
+      console.log(
+        `🚀 ~ saveComment: ~ user, message :`,
+        user,
+        new Date(),
+        message,
+      );
 
       // 1. 현재 시간(Locale)
       const now = new Date();
