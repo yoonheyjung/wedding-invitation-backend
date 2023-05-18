@@ -1,10 +1,9 @@
-/* eslint-disable spaced-comment */
 import { client } from '../config/redis.config';
 
 const convertKst = (time) => {
-  const kr_curr = new Date(Number(time));
+  const krCurrentTime = new Date(Number(time));
 
-  return kr_curr.toISOString().replace('T', ' ').substring(0, 19);
+  return krCurrentTime.toISOString().replace('T', ' ').substring(0, 19);
 };
 
 const shuffle = (array) => {
@@ -12,6 +11,11 @@ const shuffle = (array) => {
 };
 
 export default {
+  /**
+   * 댓글리스트 출력 : 페이지네이션 x
+   * @param {*} req 
+   * @param {*} res 
+   */
   findmessage: async (req, res) => {
     try {
       const messageData = [];
@@ -42,6 +46,12 @@ export default {
     }
   },
 
+  /**
+   * 댓글 저장
+   * 
+   * @param {*} req 
+   * @param {*} res 
+   */
   saveComment: async (req, res) => {
     try {
       const { user, message } = req.body;
@@ -69,6 +79,11 @@ export default {
     }
   },
 
+  /**
+   * 댓글 삭제 
+   * @param {*} req 
+   * @param {*} res 
+   */
   deleteComment: async (req, res) => {
     const { userNo } = req.token;
     const { commentNo } = req.params;
